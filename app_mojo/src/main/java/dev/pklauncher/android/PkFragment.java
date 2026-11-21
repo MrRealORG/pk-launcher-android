@@ -15,7 +15,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import git.artdeell.mojo.MojoApplication;
 import git.artdeell.mojo.Tools;
 
 /** Base for the PK screens: a themed scrolling column built in code. */
@@ -37,9 +36,16 @@ public abstract class PkFragment extends Fragment {
 
     protected abstract void build(LinearLayout column);
 
+    /**
+     * PK network work (pings, Modrinth, news) runs on its own small pool so it never queues
+     * behind MojoLauncher's download/launch tasks on the shared executor.
+     */
+    private static final java.util.concurrent.ExecutorService PK_EXECUTOR =
+            java.util.concurrent.Executors.newFixedThreadPool(4);
+
     /** Run work off the UI thread. */
     protected void background(Runnable r) {
-        MojoApplication.sExecutorService.execute(r);
+        PK_EXECUTOR.execute(r);
     }
 
     /** Post to the UI thread only while this screen is still attached. */
