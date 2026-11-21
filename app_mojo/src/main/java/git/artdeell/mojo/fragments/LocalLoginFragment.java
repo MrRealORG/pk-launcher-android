@@ -38,10 +38,20 @@ public class LocalLoginFragment extends Fragment {
                 return;
             }
 
-            ExtraCore.setValue(ExtraConstants.MOJANG_LOGIN_TODO, new String[]{
-                    mUsernameEditText.getText().toString(), "" });
-
-            Tools.swapFragment(requireActivity(), MainMenuFragment.class, MainMenuFragment.TAG, null);
+            String nickname = mUsernameEditText.getText().toString();
+            // PK: check ownership again (the owner account could have been removed meanwhile).
+            git.artdeell.mojo.MojoApplication.sExecutorService.execute(() -> {
+                boolean owner = dev.pklauncher.android.OwnershipGate.hasVerifiedOwner();
+                Tools.runOnUiThread(() -> {
+                    if (!isAdded()) return;
+                    if (!owner) {
+                        Tools.dialog(requireContext(), getString(R.string.pk_gate_title), getString(R.string.pk_gate_offline_needs_owner));
+                        return;
+                    }
+                    ExtraCore.setValue(ExtraConstants.MOJANG_LOGIN_TODO, new String[]{ nickname, "" });
+                    Tools.swapFragment(requireActivity(), MainMenuFragment.class, MainMenuFragment.TAG, null);
+                });
+            });
         });
     }
 

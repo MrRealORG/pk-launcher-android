@@ -3,16 +3,27 @@
     <color name="control_button_color">#4CC4C4C4</color>
     <color name="control_button_pressed_color">#4D000000</color>
 
-    <color name="minebutton_color">#91dffb</color>
-    <color name="minebutton_secondary">#2a2a2a</color>
-    <color name="background_app">#181818</color>
+    <color name="minebutton_color">#F2333F</color>
+    <color name="minebutton_secondary">#2A2E35</color>
+    <color name="background_app">#1B1D21</color>
     <color name="divider">@color/background_overlay</color>
-    <color name="background_overlay">#464646</color>
-    <color name="background_status_bar">#242424</color>
-    <color name="background_bottom_bar">#232323</color>
+    <color name="background_overlay">#343841</color>
+    <color name="background_status_bar">#212429</color>
+    <color name="background_bottom_bar">#212429</color>
     <color name="icon_outline_color">#FFFFFF</color>
 
-    <color name="primary_text">#FFFFFF</color>
-    <color name="secondary_text">#B2B2B2</color>
+    <color name="primary_text">#E8EAF0</color>
+    <color name="secondary_text">#9BA1AB</color>
 
+
+    <!-- PK Launcher palette (PK Default) -->
+    <color name="pk_bg">#1B1D21</color>
+    <color name="pk_surface">#212429</color>
+    <color name="pk_surface2">#2A2E35</color>
+    <color name="pk_text">#E8EAF0</color>
+    <color name="pk_muted">#9BA1AB</color>
+    <color name="pk_red">#F2333F</color>
+    <color name="pk_red_pressed">#C9232E</color>
+    <color name="pk_accent">#38BDF8</color>
+    <color name="pk_tile">#121418</color>
 </resources>

@@ -1,5 +1,8 @@
 package git.artdeell.mojo.utils.jre;
 
+import dev.pklauncher.android.OwnershipGate;
+import dev.pklauncher.android.QuickJoin;
+
 import android.content.Context;
 import android.util.ArrayMap;
 import android.util.Log;
@@ -151,7 +154,17 @@ public class GameRunner {
 
     public static void launchGame(final AppCompatActivity activity, Account account,
                                   Instance instance, String versionId, File[] classpath, GameRenderer gameRenderer) throws Throwable {
-        if(!performAuthPing(activity, account)) account = account.toLocal();
+        // PK: refuse to start without a Microsoft account that owns Minecraft: Java Edition.
+        int denyReason = OwnershipGate.checkCanPlay(account);
+        if(denyReason != 0) {
+            QuickJoin.clear();
+            throw new OwnershipGate.NotAllowedException(denyReason, activity.getString(denyReason));
+        }
+        // PK: MojoLauncher silently downgraded to an offline account when the auth server
+        // did not answer. That is a play path without ownership, so fail instead.
+        if(!performAuthPing(activity, account)) {
+            throw new OwnershipGate.NotAllowedException(R.string.pk_gate_third_party, activity.getString(R.string.pk_gate_third_party));
+        }
 
         int freeDeviceMemory = Tools.getFreeDeviceMemory(activity);
         int localeString;
@@ -482,7 +495,13 @@ public class GameRunner {
         if(versionInfo.minecraftArguments != null){
             clientArgs.addAll(splitAndFilterEmpty(versionInfo.minecraftArguments));
         }
-        return JSONUtils.insertJSONValueList(clientArgs, varArgMap);
+        List<String> resolved = JSONUtils.insertJSONValueList(clientArgs, varArgMap);
+        // PK: one-tap server join from the Servers screen.
+        Date releaseDate = null;
+        try { releaseDate = DateUtils.getOriginalReleaseDate(versionInfo); } catch (Exception ignored) {}
+        List<String> withJoin = new ArrayList<>(resolved);
+        QuickJoin.appendArgs(withJoin, releaseDate);
+        return withJoin;
     }
 
     private static List<String> splitAndFilterEmpty(String argStr) {

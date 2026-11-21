@@ -6,5 +6,6 @@
         android:left="@dimen/_2sdp"
         android:right="@dimen/_2sdp"
         android:top="@dimen/_2sdp" />
+    <corners android:radius="16dp"/>
     <solid android:color="@color/background_status_bar"/>
 </shape>

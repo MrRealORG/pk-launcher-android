@@ -31,6 +31,8 @@ public class Account {
     public String refreshToken = "0";
     public String xuid;
     public long expiresAt;
+    /** PK: for offline nicknames, the profile id of the verified Microsoft owner account that allowed it. */
+    public String ownerProfileId;
     private transient Bitmap mFaceCache;
 
     protected Account() {}

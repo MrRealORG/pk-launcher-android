@@ -27,6 +27,7 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 
+import dev.pklauncher.android.OwnershipGate;
 import git.artdeell.mojo.MojoApplication;
 import git.artdeell.mojo.Tools;
 import git.artdeell.mojo.authenticator.AuthType;
@@ -73,13 +74,28 @@ public class AccountSpinner extends AppCompatSpinner implements LoginListener, A
     /* Login listeners */
     private final ExtraListener<String> mMicrosoftLoginListener = new LoginExtraListener(AuthType.MICROSOFT);
     private final ExtraListener<String> mElyByLoginListener = new LoginExtraListener(AuthType.ELY_BY);
+    // PK: an offline nickname may only be created while a Microsoft account that owns
+    // Minecraft: Java Edition is signed in on this device (see OwnershipGate).
     private final ExtraListener<String[]> mMojangLoginListener = (key, value) -> {
-        try {
-            Account account = Accounts.create(acc-> acc.username = value[0]);
-            onLoginDone(account);
-        }catch (IOException e) {
-            onLoginError(e);
-        }
+        MojoApplication.sExecutorService.execute(() -> {
+            Account owner = OwnershipGate.findVerifiedOwner();
+            Tools.runOnUiThread(() -> {
+                if (owner == null) {
+                    onLoginError(new RuntimeException(getContext().getString(R.string.pk_gate_offline_needs_owner)));
+                    return;
+                }
+                try {
+                    Account account = Accounts.create(acc -> {
+                        acc.username = value[0];
+                        acc.authType = AuthType.LOCAL;
+                        acc.ownerProfileId = owner.profileId;
+                    });
+                    onLoginDone(account);
+                } catch (IOException e) {
+                    onLoginError(e);
+                }
+            });
+        });
         return false;
     };
 
@@ -135,7 +151,7 @@ public class AccountSpinner extends AppCompatSpinner implements LoginListener, A
 
         ExtraCore.addExtraListener(ExtraConstants.MOJANG_LOGIN_TODO, mMojangLoginListener);
         ExtraCore.addExtraListener(ExtraConstants.MICROSOFT_LOGIN_TODO, mMicrosoftLoginListener);
-        ExtraCore.addExtraListener(ExtraConstants.ELYBY_LOGIN_TODO, mElyByLoginListener);
+        // PK: Ely.by (third-party auth) is not a play path, so its login listener is not registered.
         ExtraCore.addExtraListener(ExtraConstants.REFRESH_ACCOUNT_SPINNER, mRefreshAccountsListener);
     }
 

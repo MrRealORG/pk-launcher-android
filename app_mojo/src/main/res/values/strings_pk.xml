@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PK Launcher for Android strings. -->
+<resources>
+    <string name="pk_loading">Loading…</string>
+    <string name="pk_splash_sub">Minecraft: Java Edition on your phone</string>
+
+    <!-- Account gate -->
+    <string name="pk_gate_title">Microsoft account needed</string>
+    <string name="pk_gate_sign_in">Sign in with Microsoft</string>
+    <string name="pk_gate_no_account">Sign in with a Microsoft account that owns Minecraft: Java Edition to play.</string>
+    <string name="pk_gate_not_owner">This Microsoft account has no verified Minecraft: Java Edition profile. Sign in again, or use an account that owns the game.</string>
+    <string name="pk_gate_offline_needs_owner">Offline nicknames are only for players who own the game. Sign in on this phone with a Microsoft account that owns Minecraft: Java Edition first.</string>
+    <string name="pk_gate_third_party">PK Launcher only plays with a Microsoft account that owns Minecraft: Java Edition. Third-party accounts can\'t start the game.</string>
+    <string name="pk_auth_offline_owner_only">Offline nickname (Java owners only)</string>
+    <string name="pk_auth_ms_hint">PK Launcher needs a Microsoft account that owns Minecraft: Java Edition. After you sign in you can also add an offline nickname.</string>
+
+    <!-- Home -->
+    <string name="pk_home_greeting">Ready to play</string>
+    <string name="pk_home_signed_out">Sign in with Microsoft to play</string>
+    <string name="pk_menu_servers">Servers</string>
+    <string name="pk_menu_mods">Mods</string>
+    <string name="pk_menu_news">PK News</string>
+    <string name="pk_menu_themes">Themes</string>
+    <string name="pk_menu_bug">Report a bug</string>
+    <string name="pk_menu_about">About</string>
+    <string name="pk_menu_horizon">Rust Edition</string>
+
+    <!-- Servers -->
+    <string name="pk_servers_title">Servers</string>
+    <string name="pk_servers_subtitle">Live ping from your phone. Tap Join to launch straight into a server.</string>
+    <string name="pk_servers_add_hint">play.example.net</string>
+    <string name="pk_servers_add">Add</string>
+    <string name="pk_servers_bad_address">That doesn\'t look like a server address.</string>
+    <string name="pk_servers_mine">My servers</string>
+    <string name="pk_servers_featured">Popular</string>
+    <string name="pk_servers_empty">No saved servers yet. Add one above.</string>
+    <string name="pk_servers_pinging">Pinging…</string>
+    <string name="pk_servers_online">Online</string>
+    <string name="pk_servers_offline">Offline or unreachable</string>
+    <string name="pk_servers_players">players</string>
+    <string name="pk_servers_join">Join</string>
+    <string name="pk_servers_joining">Launching and joining %1$s…</string>
+    <string name="pk_servers_remove_q">Remove %1$s from My servers?</string>
+    <string name="pk_servers_note">Join uses the selected instance. Minecraft 1.20+ joins with Quick Play; older versions use --server. Long-press a saved server to remove it. Tap a card to ping again.</string>
+
+    <!-- Mods -->
+    <string name="pk_mods_title">Mods</string>
+    <string name="pk_mods_subtitle">Install mods from Modrinth into the selected instance. Required dependencies come along automatically.</string>
+    <string name="pk_mods_search_hint">Search Modrinth (e.g. Sodium)</string>
+    <string name="pk_mods_search">Search</string>
+    <string name="pk_mods_modpacks">Browse modpacks (Modrinth / CurseForge)</string>
+    <string name="pk_mods_no_instance">No instance selected. Create or pick an instance first.</string>
+    <string name="pk_mods_instance">Installing into %1$s · %2$s · %3$s</string>
+    <string name="pk_mods_instance_vanilla">%1$s is vanilla. Create a Fabric, Quilt, Forge or NeoForge instance to install mods.</string>
+    <string name="pk_mods_by">by %1$s · %2$s downloads</string>
+    <string name="pk_mods_install">Install</string>
+    <string name="pk_mods_installing">Installing…</string>
+    <string name="pk_mods_installed">Installed</string>
+    <string name="pk_mods_installed_toast">%1$s installed (%2$d file(s) written).</string>
+    <string name="pk_mods_need_loader">Pick an instance with a mod loader (Fabric, Quilt, Forge or NeoForge) and a fixed Minecraft version first.</string>
+    <string name="pk_mods_no_version">No version of this mod matches the instance\'s Minecraft version and loader.</string>
+    <string name="pk_mods_none">Nothing found for this instance.</string>
+    <string name="pk_mods_error">Couldn\'t reach Modrinth: %1$s</string>
+
+    <!-- News -->
+    <string name="pk_news_title">PK News</string>
+    <string name="pk_news_subtitle">PK Launcher updates and Minecraft: Java Edition patch notes.</string>
+    <string name="pk_news_offline">You\'re offline. Showing saved news.</string>
+    <string name="pk_news_empty">No news yet. Check your connection and try again.</string>
+
+    <!-- Themes -->
+    <string name="pk_themes_title">Themes</string>
+    <string name="pk_themes_subtitle">The same PK theme packs as the desktop launcher. Tap one to apply it.</string>
+    <string name="pk_themes_halloween_tip">🎃 It\'s Halloween season: try Halloween Night.</string>
+    <string name="pk_themes_reduce_motion">Reduce motion</string>
+
+    <!-- Bug report -->
+    <string name="pk_bug_title">Report a bug</string>
+    <string name="pk_bug_subtitle">This opens a prefilled issue on GitHub. Nothing is sent until you submit it there.</string>
+    <string name="pk_bug_field_title">Short title</string>
+    <string name="pk_bug_field_what">What happened?</string>
+    <string name="pk_bug_field_steps">Steps to reproduce</string>
+    <string name="pk_bug_field_expected">What did you expect?</string>
+    <string name="pk_bug_open">Open on GitHub</string>
+
+    <!-- About -->
+    <string name="pk_about_version">Version %1$s</string>
+    <string name="pk_about_based_on">Based on MojoLauncher and PojavLauncher</string>
+    <string name="pk_about_based_on_body">PK Launcher for Android is a fork of MojoLauncher (by the MojoLauncher contributors), which is based on PojavLauncher (by the PojavLauncherTeam). It is free software under the GNU Lesser General Public License v3.0. The complete source code, including our changes, is published on GitHub. Thank you to everyone who built them.</string>
+    <string name="pk_about_links">Source and licence</string>
+    <string name="pk_about_third_party">Third-party components</string>
+    <string name="pk_about_legal">PK Launcher is not an official Minecraft product. Not approved by or associated with Mojang or Microsoft. Playing requires a Microsoft account that owns Minecraft: Java Edition.</string>
+
+    <!-- Rust Edition (Horizon) -->
+    <string name="pk_horizon_title">Rust Edition (Horizon)</string>
+    <string name="pk_horizon_body">Horizon, the Rust rewrite of Minecraft: Java Edition by the Horizon Team, has no Android build yet. Its own roadmap lists Android, iOS and the browser as long-term goals: touch controls, a mobile interface, packaging and loading your own game files are still missing. When an official Android build exists, PK Launcher will add it here, and it will need the same Microsoft account that owns Java Edition.</string>
+    <string name="pk_horizon_roadmap">Open Horizon\'s roadmap</string>
+</resources>

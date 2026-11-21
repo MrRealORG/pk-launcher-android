@@ -30,6 +30,26 @@ import git.artdeell.mojo.instances.Instance;
 import git.artdeell.mojo.instances.Instances;
 import git.artdeell.mojo.utils.FileUtils;
 
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import dev.pklauncher.android.AboutFragment;
+import dev.pklauncher.android.BugReportFragment;
+import dev.pklauncher.android.HorizonFragment;
+import dev.pklauncher.android.ModsFragment;
+import dev.pklauncher.android.NewsFragment;
+import dev.pklauncher.android.OwnershipGate;
+import dev.pklauncher.android.PkSceneView;
+import dev.pklauncher.android.PkTheme;
+import dev.pklauncher.android.PkUi;
+import dev.pklauncher.android.QuickJoin;
+import dev.pklauncher.android.ServersFragment;
+import dev.pklauncher.android.ThemesFragment;
+import git.artdeell.mojo.MojoApplication;
+import git.artdeell.mojo.authenticator.accounts.Account;
+import git.artdeell.mojo.authenticator.accounts.Accounts;
+
 import java.io.File;
 
 public class MainMenuFragment extends Fragment {
@@ -59,13 +79,24 @@ public class MainMenuFragment extends Fragment {
         Button mPlayButton = view.findViewById(R.id.play_button);
         mVersionSpinner = view.findViewById(R.id.mc_version_spinner);
 
-        mNewsButton.setOnClickListener(v -> Tools.openURL(requireActivity(), Tools.URL_HOME));
+        // PK screens
+        view.findViewById(R.id.pk_servers_button).setOnClickListener(v -> openPk(ServersFragment.class, ServersFragment.TAG));
+        view.findViewById(R.id.pk_mods_button).setOnClickListener(v -> openPk(ModsFragment.class, ModsFragment.TAG));
+        view.findViewById(R.id.pk_themes_button).setOnClickListener(v -> openPk(ThemesFragment.class, ThemesFragment.TAG));
+        view.findViewById(R.id.pk_bug_button).setOnClickListener(v -> openPk(BugReportFragment.class, BugReportFragment.TAG));
+        view.findViewById(R.id.pk_about_button).setOnClickListener(v -> openPk(AboutFragment.class, AboutFragment.TAG));
+        view.findViewById(R.id.pk_horizon_button).setOnClickListener(v -> openPk(HorizonFragment.class, HorizonFragment.TAG));
+        mNewsButton.setOnClickListener(v -> openPk(NewsFragment.class, NewsFragment.TAG));
+        // MojoLauncher's community link stays available (credit to upstream).
         mDiscordButton.setOnClickListener(v -> Tools.openURL(requireActivity(), getString(R.string.social_media_invite)));
         mCustomControlButton.setOnClickListener(v -> startActivity(new Intent(requireContext(), CustomControlsActivity.class)));
         mInstallJarButton.setOnClickListener(v -> runInstallerWithConfirmation());
         mEditProfileButton.setOnClickListener(v -> mVersionSpinner.openProfileEditor(requireActivity()));
 
-        mPlayButton.setOnClickListener(v -> ExtraCore.setValue(ExtraConstants.LAUNCH_GAME, true));
+        mPlayButton.setOnClickListener(v -> {
+            QuickJoin.clear(); // a plain Play never auto-joins a server
+            ExtraCore.setValue(ExtraConstants.LAUNCH_GAME, true);
+        });
 
         mShareLogsButton.setOnClickListener((v) -> shareLog(requireContext()));
 
@@ -76,6 +107,62 @@ public class MainMenuFragment extends Fragment {
             Tools.swapFragment(requireActivity(), GamepadMapperFragment.class, GamepadMapperFragment.TAG, null);
             return true;
         });
+
+        applyPkTheme(view);
+    }
+
+    private void openPk(Class<? extends Fragment> fragment, String tag) {
+        Tools.swapFragment(requireActivity(), fragment, tag, null);
+    }
+
+    /** PK theme colours + animated header scene + entrance animation. */
+    private void applyPkTheme(View view) {
+        PkTheme theme = PkTheme.current(requireContext());
+        view.setBackgroundColor(theme.bg);
+        View bottom = view.findViewById(R.id._background_display_view);
+        if (bottom != null) bottom.setBackgroundColor(theme.surface);
+        Button play = view.findViewById(R.id.play_button);
+        android.graphics.drawable.StateListDrawable playBg = new android.graphics.drawable.StateListDrawable();
+        float r = PkUi.dp(requireContext(), 14);
+        playBg.addState(new int[]{android.R.attr.state_pressed}, PkUi.rounded(darken(theme.primary), r));
+        playBg.addState(new int[]{}, PkUi.rounded(theme.primary, r));
+        play.setBackground(playBg);
+
+        FrameLayout header = view.findViewById(R.id.pk_header);
+        header.setBackground(PkUi.rounded(theme.surface, PkUi.dp(requireContext(), 18)));
+        header.setClipToOutline(true);
+        PkSceneView scene = new PkSceneView(requireContext(), theme);
+        header.addView(scene, 0, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        ((TextView) view.findViewById(R.id.pk_header_title)).setTextColor(theme.text);
+        TextView status = view.findViewById(R.id.pk_header_status);
+        status.setTextColor(theme.muted);
+        MojoApplication.sExecutorService.execute(() -> {
+            Account current = Accounts.getCurrent();
+            int deny = OwnershipGate.checkCanPlay(current);
+            Tools.runOnUiThread(() -> {
+                if (!isAdded()) return;
+                status.setText(deny == 0 && current != null
+                        ? getString(R.string.pk_home_greeting) + " · " + current.username
+                        : getString(R.string.pk_home_signed_out));
+            });
+        });
+
+        LinearLayout column = view.findViewById(R.id.pk_home_column);
+        PkUi.enter(column);
+        if (!PkTheme.reduceMotion(requireContext())) {
+            play.setScaleX(0.96f);
+            play.setScaleY(0.96f);
+            play.setAlpha(0f);
+            play.animate().scaleX(1f).scaleY(1f).alpha(1f).setStartDelay(150).setDuration(320)
+                    .setInterpolator(new android.view.animation.OvershootInterpolator(1.2f)).start();
+        }
+    }
+
+    private static int darken(int color) {
+        float[] hsv = new float[3];
+        android.graphics.Color.colorToHSV(color, hsv);
+        hsv[2] *= 0.82f;
+        return android.graphics.Color.HSVToColor(hsv);
     }
 
     private void openGameDirectory(Context context) {

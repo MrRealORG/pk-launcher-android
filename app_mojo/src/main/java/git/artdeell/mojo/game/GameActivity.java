@@ -98,6 +98,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
     private ControlLayout mControlLayout;
     private HotbarView mHotbarView;
     private View mLoadingScreen;
+    private android.animation.ValueAnimator mPkPulse;
     private GameRenderer mGameRenderer;
 
     Instance instance;
@@ -323,6 +324,18 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         mDrawerPullButton = findViewById(R.id.drawer_button);
         mHotbarView = findViewById(R.id.hotbar_view);
         mLoadingScreen = findViewById(R.id.main_loading_screen);
+        // PK: gentle pulse on the PK mark while the game boots
+        View pkMark = findViewById(R.id.pk_loading_mark);
+        if(pkMark != null && !dev.pklauncher.android.PkTheme.reduceMotion(this)) {
+            mPkPulse = android.animation.ObjectAnimator.ofPropertyValuesHolder(pkMark,
+                    android.animation.PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 1.08f),
+                    android.animation.PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 1.08f),
+                    android.animation.PropertyValuesHolder.ofFloat(View.ALPHA, 1f, 0.75f));
+            mPkPulse.setDuration(900);
+            mPkPulse.setRepeatCount(android.animation.ValueAnimator.INFINITE);
+            mPkPulse.setRepeatMode(android.animation.ValueAnimator.REVERSE);
+            mPkPulse.start();
+        }
     }
 
     @Override
@@ -524,6 +537,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
 
     public void hideLoadingScreen(){
         if(mLoadingScreen == null) return;
+        if(mPkPulse != null) { mPkPulse.cancel(); mPkPulse = null; }
         ((TextView) mLoadingScreen.findViewById(R.id.main_loading_screen_text)).setText(getString(R.string.loading_screen_booted, PLATFORM.backendName()));
         mLoadingScreen.animate()
                 .alpha(0f)

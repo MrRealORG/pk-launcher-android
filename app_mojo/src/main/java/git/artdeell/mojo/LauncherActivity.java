@@ -26,6 +26,10 @@ import androidx.fragment.app.FragmentManager;
 import com.kdt.mcgui.ProgressLayout;
 
 import git.artdeell.mojo.authenticator.accounts.Accounts;
+import dev.pklauncher.android.OwnershipGate;
+import dev.pklauncher.android.PkSplash;
+import dev.pklauncher.android.PkTheme;
+import dev.pklauncher.android.QuickJoin;
 import git.artdeell.mojo.extra.ExtraConstants;
 import git.artdeell.mojo.extra.ExtraCore;
 import git.artdeell.mojo.extra.ExtraListener;
@@ -124,6 +128,19 @@ public class LauncherActivity extends BaseActivity {
             ExtraCore.setValue(ExtraConstants.SELECT_AUTH_METHOD, true);
             return false;
         }
+        // PK: play requires a Microsoft account that owns Minecraft: Java Edition
+        // (an offline nickname only while such an account is signed in on this device).
+        int denyReason = OwnershipGate.checkCanPlay(Accounts.getCurrent());
+        if(denyReason != 0) {
+            QuickJoin.clear();
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle(R.string.pk_gate_title)
+                    .setMessage(denyReason)
+                    .setPositiveButton(R.string.pk_gate_sign_in, (d, w) -> ExtraCore.setValue(ExtraConstants.SELECT_AUTH_METHOD, true))
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show();
+            return false;
+        }
         String normalizedVersionId = MoJsonExtras.normalizeVersionId(selectedInstance.versionId);
         JVersionList.Version mcVersion = MoJsonExtras.getListedVersion(normalizedVersionId);
         new MoJsonDownloader().start(
@@ -172,6 +189,9 @@ public class LauncherActivity extends BaseActivity {
 
         getWindow().setBackgroundDrawable(null);
         bindViews();
+        // PK: theme colours for the window/system bars and the animated splash on a cold start.
+        PkTheme.applyToActivity(this);
+        if(savedInstanceState == null) PkSplash.show(this);
         mRequestPermissionLauncher = this.registerForActivityResult(
                 new ActivityResultContracts.RequestPermission(),
                 isAllowed -> {
